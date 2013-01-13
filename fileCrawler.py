@@ -92,7 +92,7 @@ def htmlExtractFile(data, ext):
 	return files
 
 def downloadFile(f):
-	subprocess.call(["wget", "-q", "-P", "files/", f])
+	subprocess.call(["wget", "-q", "-P", "files/", "-T", "10", f])
 
 
 
