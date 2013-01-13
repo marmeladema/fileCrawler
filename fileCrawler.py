@@ -60,7 +60,10 @@ def randomWord(dic):
 def httpGetData(url, query):
 	request = urllib2.Request(url+'?'+urllib.urlencode(query), None, {'Referer': url, 'User-Agent': random.choice(BROWSERS)})
 	response = urllib2.urlopen(request)
-	return response.read()
+	try:
+		return response.read()
+	except:
+		return ""
 
 def googleFileSearch(ext, sup=None):
 	url = 'http://www.google.fr/search'
@@ -92,7 +95,7 @@ def htmlExtractFile(data, ext):
 	return files
 
 def downloadFile(f):
-	subprocess.call(["wget", "-q", "-P", "files/", "-T", "10", f])
+	subprocess.call(["wget", "-P", "files/", "-T", "10", "-t", "3", f])
 
 
 
