@@ -52,6 +52,11 @@ BROWSERS = (
 	'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.15 (KHTML, like Gecko) Chrome/24.0.1295.0 Safari/537.15',
 )
 
+dic = open("english.dic").readlines()
+
+def randomWord(dic):
+	return random.choice(dic).strip()
+
 def httpGetData(url, query):
 	request = urllib2.Request(url+'?'+urllib.urlencode(query), None, {'Referer': url, 'User-Agent': random.choice(BROWSERS)})
 	response = urllib2.urlopen(request)
@@ -86,39 +91,20 @@ def htmlExtractFile(data, ext):
 			files.add(f)
 	return files
 
-ext = "xls"
-if len(sys.argv) >= 2:
-	ext = sys.argv[1]
-
-for f in googleFileSearch(ext):
-	print f
+def downloadFile(f):
+	subprocess.call(["wget", "-q", "-P", "files/", f])
 
 
-"""
-nb = 0
-num = 2
-while 1:
-	query = {'q':'filetype:'+ext, 'num':num, 'hl':'fr', 'safe':'off', 'tbm':'vid', 'start':nb}
-	url = 'http://www.google.fr/search?'+urllib.urlencode(query)
-	request = urllib2.Request(url, None, {'Referer': 'http://www.google.fr', 'User-Agent': random.choice(BROWSERS)})
-	response = urllib2.urlopen(request)
 
-	data = response.read()
-	end = data.find("."+ext)
-	files = set()
-	while end != -1:
-		end,prev_end = data.find("."+ext, end+1),end
-		start = data.rfind("http://", prev_end, end)
-		files.add(data[start:end+1+len(ext)])
-	
-	if len(f) == 0:
-		print "No file found, Captcha ?"
-		sys.exit(1)
-		
-	for f in files:
-		subprocess.call(["wget", "-q", "-P", "files/", f])
-		
-	nb += num
-	print nb
-"""
+if __name__ == "__main__":
+	ext = "xls"
+	if len(sys.argv) >= 2:
+		ext = sys.argv[1]
 
+	while 1:
+		for f in googleFileSearch(ext, randomWord(dic)):
+			print "Downloading",f
+			downloadFile(f)
+		for f in bingFileSearch(ext, randomWord(dic)):
+			print "Downloading",f
+			downloadFile(f)
